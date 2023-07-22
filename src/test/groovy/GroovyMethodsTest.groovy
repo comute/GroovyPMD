@@ -19,11 +19,11 @@
 package groovy
 
 import groovy.test.GroovyTestCase
+import org.codehaus.groovy.util.StringUtil
 
 import java.awt.Dimension
 import java.nio.CharBuffer
 import java.util.concurrent.LinkedBlockingQueue
-import org.codehaus.groovy.util.StringUtil
 
 /**
  * Tests various GDK methods
@@ -445,12 +445,6 @@ class GroovyMethodsTest extends GroovyTestCase {
         assert map.size() == 2
     }
 
-    void testInForLists() {
-        def list = ['a', 'b', 'c']
-        assert 'b' in list
-        assert !('d' in list)
-    }
-
     void testFirstLastHeadTailInitForLists() {
         def list = ['a', 'b', 'c']
         assert 'a' == list.first()
@@ -548,10 +542,71 @@ class GroovyMethodsTest extends GroovyTestCase {
         assert list.size() == 3
     }
 
+    // GROOVY-9848
+    void testInForMaps() {
+        assert 'foo' in [foo:true]
+        assert 'foo' in [foo:null]
+        assert 'bar' !in [foo:true]
+        assert 'bar' !in [:].withDefault{ true }
+    }
+
+    void testInForSets() {
+        def set = ['a', 'b', 'c'] as Set
+        assert 'a' in set
+        assert 'b' in set
+        assert 'c' in set
+        assert 'd' !in set
+        assert !('d' in set)
+        assert !(null in set)
+        assert !(true in set)
+    }
+
+    void testInForLists() {
+        def list = ['a', 'b', 'c']
+        assert 'a' in list
+        assert 'b' in list
+        assert 'c' in list
+        assert 'd' !in list
+        assert !('d' in list)
+        assert !(null in list)
+        assert !(true in list)
+    }
+
     void testInForArrays() {
-        String[] array = ['a', 'b', 'c']
+        def array = new String[]{'a', 'b', 'c'}
+        assert 'a' in array
         assert 'b' in array
+        assert 'c' in array
+        assert 'd' !in array
         assert !('d' in array)
+        assert !(null in array)
+        assert !(true in array)
+    }
+
+    // GROOVY-2456
+    void testInForStrings() {
+        def string = 'abc'
+        shouldFail { assert 'a'  in string }
+        shouldFail { assert 'b'  in string }
+        shouldFail { assert 'c'  in string }
+        shouldFail { assert 'ab' in string }
+        shouldFail { assert 'bc' in string }
+        assert 'abc' in string
+        assert !('d' in string)
+        assert !(null in string)
+        assert !(true in string)
+    }
+
+    // GROOVY-7919
+    void testInForIterables() {
+        Iterable iter = { -> ['a','b','c'].iterator() }
+        assert 'a' in iter
+        assert 'b' in iter
+        assert 'c' in iter
+        assert 'd' !in iter
+        assert !('d' in iter)
+        assert !(null in iter)
+        assert !(true in iter)
     }
 
     void testMaxForIterable() {

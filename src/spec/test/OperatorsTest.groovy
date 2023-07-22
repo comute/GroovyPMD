@@ -230,9 +230,6 @@ class OperatorsTest extends CompilableTestSupport {
         // end::nullsafe[]
     }
 
-    OperatorsTest() {
-    }
-
     void testDirectFieldAccess() {
         assertScript '''
 // tag::direct_field_class[]
@@ -704,6 +701,7 @@ assert (b1 + b2).size == 15                         // <1>
 // end::operator_overload_op[]
 '''
     }
+
     void testOperatorOverloadingWithDifferentArgumentType() {
         assertScript '''
 class Bucket {

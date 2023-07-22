@@ -329,31 +329,37 @@ final class MapTest extends GroovyTestCase {
         assert result2 == 'c2 b3 a1 '
     }
 
+    void testMapIsCaseWithGrep() {
+        def fruitList = ['apple', 'apple', 'pear', 'orange', 'pear', 'lemon', 'banana']
+        def predicate = [apple:true, banana:true, lemon:false, orange:false, pear:true]
+        predicate.retainAll{ e -> e.value } // GROOVY-9848: retain truthy entrys
+
+        def nonCitrus = fruitList.grep(predicate)
+        assert nonCitrus == ['apple', 'apple', 'pear', 'pear', 'banana']
+    }
+
+    void testMapIsCaseWithSwitch() {
+        assert switch ('foo') {
+          case [foo: true, bar: false] -> true
+          default -> false
+        }
+        assert switch ('foo') {
+          case [foo: false, bar: true] -> true
+          default -> false
+        }
+        assert switch ('bar') {
+          case [foo: true] -> false
+          default -> true
+        }
+    }
+
     void testMapWithDefault() {
-        def m = [:].withDefault {k -> k * 2}
+        def m = [:].withDefault { k -> k * 2 }
         m[1] = 3
         assert m[1] == 3
         assert m[2] == 4
         assert [1: 3, 2: 4] == m
         assert m == [1: 3, 2: 4]
-    }
-
-    void testMapIsCaseWithGrep() {
-        def predicate = [apple:true, banana:true, lemon:false, orange:false, pear:true]
-        def fruitList = ['apple', 'apple', 'pear', 'orange', 'pear', 'lemon', 'banana']
-        def expected = ['apple', 'apple', 'pear', 'pear', 'banana']
-        assert fruitList.grep(predicate) == expected
-    }
-
-    void testMapIsCaseWithSwitch() {
-        switch ('foo') {
-            case [foo: true, bar: false]: assert true; break
-            default: assert false
-        }
-        switch ('bar') {
-            case [foo: true, bar: false]: assert false; break
-            default: assert true
-        }
     }
 
     void testMapWithDefaultCanBeConfiguredToNotStoreDefaultValue() {

@@ -1111,7 +1111,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     /**
-     * Special 'Case' implementation for Class, which allows testing
+     * Special 'case' implementation for Class, which allows testing
      * whether some switch value is assignable from the given case class.
      *
      * If the switch value is an object, {@code isCase} will return true if the
@@ -1164,9 +1164,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     /**
-     * 'Case' implementation for collections which tests if the 'switch'
-     * operand is contained in any of the 'case' values.
-     * For example:
+     * Special 'case' implementation for collections which tests if the 'switch'
+     * operand is contained in any of the 'case' values. For example:
      * <pre class="groovyTestCase">switch( 3 ) {
      *   case [1,3,5]:
      *     assert true
@@ -1186,9 +1185,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     /**
-     * 'Case' implementation for iterable types which tests if the 'switch'
-     * operand is contained in any of the 'case' values.
-     * For example:
+     * Special 'case' implementation for iterables which tests if the 'switch'
+     * operand is contained in any of the 'case' values. For example:
      * <pre class="groovyTestCase">Iterable it = {[1,3,5].iterator()}
      * switch( 3 ) {
      *   case it:
@@ -1196,12 +1194,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *     break
      *   default:
      *     assert false
-     * }
-     *
-     * //GROOVY-7919
-     * assert 1 in it
-     * assert 2 !in it
-     * </pre>
+     * }</pre>
      *
      * @param caseValue   the case value
      * @param switchValue the switch value
@@ -1214,11 +1207,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     /**
-     * 'Case' implementation for maps which tests the groovy truth
-     * value obtained using the 'switch' operand as key.
-     * For example:
+     * Special 'case' implementation for maps which tests if the 'switch' operand
+     * exists in the key set. For example:
      * <pre class="groovyTestCase">switch( 'foo' ) {
-     *   case [foo:true, bar:false]:
+     *   case [foo:true]:
      *     assert true
      *     break
      *   default:
@@ -1227,11 +1219,11 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param caseValue   the case value
      * @param switchValue the switch value
-     * @return the groovy truth value from caseValue corresponding to the switchValue key
+     * @return true if the key set of caseValue contains the switchValue
      * @since 1.7.6
      */
-    public static boolean isCase(Map caseValue, Object switchValue) {
-        return DefaultTypeTransformation.castToBoolean(caseValue.get(switchValue));
+    public static boolean isCase(Map<?,?> caseValue, Object switchValue) {
+        return caseValue.containsKey(switchValue);
     }
 
     /**
